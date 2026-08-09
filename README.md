@@ -5,16 +5,18 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Tests](https://img.shields.io/badge/tests-15%20passed-brightgreen.svg)](tests/)
 
-**An End-to-End Research & Systems Suite for Mechanistic Interpretability, Sparse Autoencoders (SAEs), and Causal Concept Steering on State-of-the-Art Open-Weights LLMs in PyTorch.**
+**An End-to-End Research & Systems Suite for Mechanistic Interpretability, Sparse Autoencoders (SAEs), and Causal Concept Steering on Frontier & Open-Weights LLMs in PyTorch.**
 
-Supports modern transformer architectures (**`Qwen/Qwen2.5`**, **`google/gemma-2`**, **`meta-llama/Llama-3`**, **`HuggingFaceTB/SmolLM2`**, **`GPT-2`**).
+Supports cutting-edge architectures including **`moonshotai/Kimi-k2.6`**, **`Qwen/Qwen2.5`**, **`google/gemma-2`**, **`meta-llama/Llama-3`**, **`HuggingFaceTB/SmolLM2`**, and custom HuggingFace model IDs.
 
 ---
 
 ## 🌟 Key Capabilities
 
-* **🤖 Modern Architecture Support (2024 SOTA):**
-  * Fully compatible with RoPE, Grouped-Query Attention (GQA), SwiGLU, and RMSNorm architectures like **Qwen 2.5 (0.5B/1.5B/7B)**, **Gemma 2 (2B/9B)**, and **SmolLM2**.
+* **🤖 Frontier & Modern Architecture Support:**
+  * **Kimi K2.6 / Moonlight (`moonshotai`)**: Native layer resolution and hook extraction for Moonshot AI architectures.
+  * **Qwen 2.5 (`Qwen/Qwen2.5-0.5B`, `1.5B`, `7B`)**: SOTA compact reasoning models with Grouped-Query Attention (GQA), RoPE, and SwiGLU.
+  * **SmolLM2 & Gemma 2**: Ultra-fast compact models for on-device and high-throughput research.
 * **🔬 State-of-the-Art SAE Architectures:**
   * **Top-K SAE** (*Gao et al., OpenAI / Anthropic 2024*): Eliminates $L_1$ shrinkage bias with exact $k$-sparsity per token and dead-latent auxiliary losses.
   * **Gated SAE** (*Rajamanoharan et al., Google DeepMind 2024*): Decouples feature gating from magnitude estimation.
@@ -36,6 +38,20 @@ Supports modern transformer architectures (**`Qwen/Qwen2.5`**, **`google/gemma-2
 
 ---
 
+## 🏛️ Supported Models Matrix
+
+| Model Family | Model ID | Key Architecture Features |
+| :--- | :--- | :--- |
+| **Kimi / Moonshot** | `moonshotai/Kimi-k2.6` | MoE / Dense reasoning architecture |
+| **Moonlight** | `moonshotai/Moonlight-16B-A3B` | Sparse Mixture-of-Experts (MoE) |
+| **Qwen 2.5** | `Qwen/Qwen2.5-0.5B`, `1.5B` | GQA, RoPE, SwiGLU, RMSNorm |
+| **SmolLM2** | `HuggingFaceTB/SmolLM2-360M` | Ultra-fast compact research baseline |
+| **Gemma 2** | `google/gemma-2-2b` | Sliding window attention, Logit soft-capping |
+| **GPT-2** | `gpt2` | Classical interpretability benchmark |
+| **Custom Models** | Any HuggingFace CausalLM | Generic `model.layers` hook support |
+
+---
+
 ## 🚀 Quickstart
 
 ### 1. Launch the Interactive Web Dashboard
@@ -43,13 +59,16 @@ Supports modern transformer architectures (**`Qwen/Qwen2.5`**, **`google/gemma-2
 ```bash
 streamlit run src/dashboard/app.py
 ```
-Open **`http://localhost:8501`** in your browser!
+Open **`http://localhost:8501`** in your browser! Switch between **Kimi K2.6**, **Qwen 2.5**, and other models directly from the sidebar.
 
-### 2. Train on Modern LLMs (e.g. Qwen 2.5)
+### 2. Train on Modern LLMs
 
 ```bash
 # Train Top-K SAE on Qwen 2.5 Layer 12
 python -m src.cli train --config configs/qwen2.5_0.5b_layer12.yaml --steps 1000
+
+# Train Top-K SAE on Kimi K2.6 Layer 12
+python -m src.cli train --config configs/kimi_k2.6_layer12.yaml --steps 1000
 ```
 
 ### 3. Inspect Feature Semantics (Direct Logit Attribution)
