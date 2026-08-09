@@ -11,6 +11,85 @@ Supports cutting-edge architectures including **`moonshotai/Kimi-k2.6`**, **`Qwe
 
 ---
 
+## 🎨 Visual System Architecture
+
+### 1. End-to-End Concept Extraction & Causal Steering Loop
+
+```mermaid
+flowchart TD
+    subgraph LLM ["🤖 Host Language Model (Qwen 2.5 / Kimi / Gemma / LLaMA)"]
+        A["Input Prompt Tokens"] --> B["Transformer Layers (1 .. L-1)"]
+        B --> C["Layer L Residual Stream x"]
+        C -.->|"Forward Pass"| D["Layers (L+1 .. N)"]
+        D --> E["Unembedding Matrix W_U"]
+        E --> F["Predicted Next Token"]
+    end
+
+    subgraph SAE ["🔬 Top-K Sparse Autoencoder (SAE)"]
+        C ==>|"Hook Intercept"| G["Encoder: z = W_enc(x - b_dec) + b_enc"]
+        G --> H["Top-K Sparsity: f(x) = TopK(ReLU(z), k)"]
+        H --> I["Monosemantic Latent Features (3,584 Concepts)"]
+        I --> J["Decoder: x_hat = W_dec · f(x) + b_dec"]
+    end
+
+    subgraph STEER ["🎛️ Real-Time Causal Activation Intervention"]
+        I -->|"Select Feature d_i"| K["Target Concept Direction d_i = W_dec[i]"]
+        K --> L["Apply Multiplier: α · d_i"]
+        L ==>|"Causal Injection: x' = x + α · d_i"| D
+    end
+
+    subgraph DLA ["📊 Direct Logit Attribution (DLA)"]
+        K --> M["Logits_i = d_i · W_U"]
+        M --> N["Promoted Vocabulary Tokens (+Boost)"]
+        M --> O["Suppressed Vocabulary Tokens (-Penalty)"]
+    end
+
+    style LLM fill:#1e1e2e,stroke:#89b4fa,stroke-width:2px,color:#cdd6f4
+    style SAE fill:#181825,stroke:#a6e3a1,stroke-width:2px,color:#cdd6f4
+    style STEER fill:#313244,stroke:#f38ba8,stroke-width:2px,color:#cdd6f4
+    style DLA fill:#1e1e2e,stroke:#fab387,stroke-width:2px,color:#cdd6f4
+```
+
+---
+
+### 2. How Sparse Autoencoders Decompose the "Black Box"
+
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                    POLYSEMANTIC RESIDUAL STREAM (896 Dims)                   │
+│         [ Single neuron fires for: Eiffel Tower + DNA + French + Code ]       │
+└──────────────────────────────────────┬───────────────────────────────────────┘
+                                       │
+                         [ Top-K Sparse Autoencoder ]
+                                       │
+                                       ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                MONOSEMANTIC CONCEPT DICTIONARY (3,584 Features)              │
+│                                                                              │
+│  🟢 Feature #42:   "Formal Politics & Government"   ──► [minister, parliament]│
+│  ⚪ Feature #43:   (Inactive, 0.0)                                           │
+│  🟢 Feature #108:  "Quantum Entanglement Math"      ──► [superposition, spin]│
+│  ⚪ Feature #109:  (Inactive, 0.0)                                           │
+│  🟢 Feature #512:  "Positive Tone & Optimism"       ──► [breakthrough, hope] │
+│  ... (Only k=32 active features per token, 3552 features turned off to 0)    │
+└──────────────────────────────────────┬───────────────────────────────────────┘
+                                       │
+                         [ Causal Activation Hook ]
+                                       │
+                                       ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                 LIVE STEERED AUTOREGRESSIVE GENERATION                       │
+│                                                                              │
+│  🔴 Baseline Output (α = 0.0):                                               │
+│     "The committee met yesterday to review the proposed schedule..."         │
+│                                                                              │
+│  🟢 Steered with Feature #108 (Quantum Physics, α = +8.0):                   │
+│     "The quantum state vector evolved under the Hamiltonian operator..."     │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
 ## 🌟 Key Capabilities
 
 * **🤖 Frontier & Modern Architecture Support:**
@@ -49,6 +128,36 @@ Supports cutting-edge architectures including **`moonshotai/Kimi-k2.6`**, **`Qwe
 | **Gemma 2** | `google/gemma-2-2b` | Sliding window attention, Logit soft-capping |
 | **GPT-2** | `gpt2` | Classical interpretability benchmark |
 | **Custom Models** | Any HuggingFace CausalLM | Generic `model.layers` hook support |
+
+---
+
+## 🖥️ Interactive Web Dashboard UI Preview
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  🧠 Interp Circuit Engine | SOTA Concept Steering                           │
+├──────────────────────┬──────────────────────────────────────────────────────┤
+│ ⚙️ Configuration     │  🚀 Tab 1: Live Steering | 🔍 Tab 2: DLA | 📊 Tab 3 │
+│                      │                                                      │
+│ Host Model:          │  ✍️ Input Prompt:                                    │
+│ [ Qwen2.5-0.5B  ▼ ]  │  "The key breakthrough in AI came when researchers"  │
+│                      │                                                      │
+│ Hook Layer:          │  🎯 Target Feature ID: [ 42 ]   α Multiplier: [ 8.0] │
+│ [ ━━━━━●━━━━━━ ] L12 │                                                      │
+│                      │  🔬 Feature Profile: Feature #42                     │
+│ Checkpoint:          │  [=======================] +0.82  "algorithm"        │
+│ [ sae_final.pt  ▼ ]  │  [==================]     +0.64  "breakthrough"      │
+│                      │  [=============]          +0.49  "quantum"           │
+│ Device:              │                                                      │
+│ 🟢 Active (mps:0)    │  [ ⚡ Run Steering Comparison ]                      │
+│                      │                                                      │
+│                      │  🔴 Baseline Output (α=0.0):                         │
+│                      │  "...published their findings on standard neural..." │
+│                      │                                                      │
+│                      │  🟢 Steered Output (α=+8.0):                         │
+│                      │  "...discovered the unified quantum tensor state..." │
+└──────────────────────┴──────────────────────────────────────────────────────┘
+```
 
 ---
 
