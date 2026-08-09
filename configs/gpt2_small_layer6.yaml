@@ -1,0 +1,45 @@
+sae:
+  architecture: "topk"
+  d_in: 768
+  d_sae: 3072
+  k: 32
+  l1_coeff: 0.001
+  aux_loss_coeff: 0.01
+  tied_bias: true
+  normalize_decoder_weights: true
+
+extraction:
+  model_name: "gpt2"
+  hook_layer: 6
+  hook_type: "resid_post"
+  seq_len: 128
+  buffer_size: 16384
+  batch_size: 16
+  dataset_name: "wikitext"
+  dataset_config: "wikitext-2-raw-v1"
+
+training:
+  total_training_tokens: 500000
+  batch_size: 512
+  lr: 0.0005
+  lr_warmup_steps: 200
+  lr_decay_steps: 1000
+  weight_decay: 0.0
+  clip_grad_norm: 1.0
+  dead_neuron_threshold: 25000
+  resample_dead_latents: true
+  resample_frequency_steps: 500
+  eval_frequency_steps: 100
+  checkpoint_frequency_steps: 500
+  save_dir: "checkpoints/gpt2_layer6_topk"
+  device: "auto"
+  seed: 42
+
+steering:
+  target_feature_idx: 0
+  steering_coefficient: 5.0
+  intervention_type: "addition"
+  prompt: "The fundamental laws of nature dictate that"
+  max_new_tokens: 40
+  temperature: 0.7
+  top_p: 0.9

@@ -1,0 +1,45 @@
+sae:
+  architecture: "topk"
+  d_in: 2304
+  d_sae: 9216
+  k: 64
+  l1_coeff: 0.001
+  aux_loss_coeff: 0.01
+  tied_bias: true
+  normalize_decoder_weights: true
+
+extraction:
+  model_name: "google/gemma-2-2b"
+  hook_layer: 12
+  hook_type: "resid_post"
+  seq_len: 256
+  buffer_size: 32768
+  batch_size: 8
+  dataset_name: "wikitext"
+  dataset_config: "wikitext-2-raw-v1"
+
+training:
+  total_training_tokens: 2000000
+  batch_size: 1024
+  lr: 0.0003
+  lr_warmup_steps: 500
+  lr_decay_steps: 2000
+  weight_decay: 0.0
+  clip_grad_norm: 1.0
+  dead_neuron_threshold: 50000
+  resample_dead_latents: true
+  resample_frequency_steps: 1000
+  eval_frequency_steps: 200
+  checkpoint_frequency_steps: 1000
+  save_dir: "checkpoints/gemma2_layer12_topk"
+  device: "auto"
+  seed: 42
+
+steering:
+  target_feature_idx: 128
+  steering_coefficient: 8.0
+  intervention_type: "addition"
+  prompt: "Scientists have recently discovered a breakthrough in"
+  max_new_tokens: 50
+  temperature: 0.7
+  top_p: 0.9
