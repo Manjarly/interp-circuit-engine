@@ -129,35 +129,6 @@ flowchart TD
 | **GPT-2** | `gpt2` | Classical interpretability benchmark |
 | **Custom Models** | Any HuggingFace CausalLM | Generic `model.layers` hook support |
 
----
-
-## 🖥️ Interactive Web Dashboard UI Preview
-
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  🧠 Interp Circuit Engine | SOTA Concept Steering                           │
-├──────────────────────┬──────────────────────────────────────────────────────┤
-│ ⚙️ Configuration     │  🚀 Tab 1: Live Steering | 🔍 Tab 2: DLA | 📊 Tab 3 │
-│                      │                                                      │
-│ Host Model:          │  ✍️ Input Prompt:                                    │
-│ [ Qwen2.5-0.5B  ▼ ]  │  "The key breakthrough in AI came when researchers"  │
-│                      │                                                      │
-│ Hook Layer:          │  🎯 Target Feature ID: [ 42 ]   α Multiplier: [ 8.0] │
-│ [ ━━━━━●━━━━━━ ] L12 │                                                      │
-│                      │  🔬 Feature Profile: Feature #42                     │
-│ Checkpoint:          │  [=======================] +0.82  "algorithm"        │
-│ [ sae_final.pt  ▼ ]  │  [==================]     +0.64  "breakthrough"      │
-│                      │  [=============]          +0.49  "quantum"           │
-│ Device:              │                                                      │
-│ 🟢 Active (mps:0)    │  [ ⚡ Run Steering Comparison ]                      │
-│                      │                                                      │
-│                      │  🔴 Baseline Output (α=0.0):                         │
-│                      │  "...published their findings on standard neural..." │
-│                      │                                                      │
-│                      │  🟢 Steered Output (α=+8.0):                         │
-│                      │  "...discovered the unified quantum tensor state..." │
-└──────────────────────┴──────────────────────────────────────────────────────┘
-```
 
 ---
 
