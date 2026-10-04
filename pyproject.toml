@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "interp-circuit-engine"
 version = "0.1.0"
-description = "End-to-End Mechanistic Interpretability Suite: Extraction, Auto-Labeling, and Latent Steering"
+description = "End-to-end mechanistic interpretability and activation engineering suite featuring Top-K/Gated SAE extraction, Direct Logit Attribution auto-labeling, and real-time causal steering"
 readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
